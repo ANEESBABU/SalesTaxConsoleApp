@@ -5,7 +5,7 @@ namespace SalesTaxApp.Services.Interfaces;
 
 public interface ITaxRuleService
 {
-    decimal CalculateTax(Product product);
+    List<Product> CalculateTax(List<Product> product, string CountryCode);
 
     protected static decimal RoundUpToNearestPoint05(decimal value)
     {

@@ -1,22 +1,27 @@
-﻿using SalesTaxApp.Calculations;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using MyApp.Utilities;
 using SalesTaxApp.Models;
 using SalesTaxApp.Services.Interfaces;
 using SalesTaxCalculator;
 
-var taxRules = new List<ITaxRuleService> { new BasicSalesTaxRule(), new ImportDutyTaxRule() };
-var taxCalculator = new TaxCalculator(taxRules);
+ITaxRuleService taxRule = new TaxRuleService();
+var receipt = new Receipt();
 
-var inputBaskets = InputConstants.InputBaskets;
+System.Console.WriteLine("Enter the products data in comma seperated line:");
+string? inputData = Console.ReadLine();
 
-int count = 1;
-foreach (var basket in inputBaskets)
+while (inputData!.ToLower() != "done")
 {
-    Console.WriteLine($"Output {count++}:");
-    var receipt = new Receipt();
-    foreach (var item in basket)
-    {
-        var product = taxCalculator.ParseAndCalculate(item);
-        receipt.Products.Add(product);
-    }
+    System.Console.Write("Enter the Country Code(IND, UAE, US):");
+    var CountryCode = Console.ReadLine();
+
+
+    var productsList = InputProcessor.ProcessInput(inputData!);
+    productsList = taxRule.CalculateTax(productsList, CountryCode!);
+    receipt.Products = productsList;
     receipt.Print();
+    
+    System.Console.WriteLine("Enter the products data in comma seperated line:");
+    inputData = Console.ReadLine();
 }
